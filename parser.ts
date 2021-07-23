@@ -14,7 +14,10 @@ const parser = async (pathName: string, componentName: string) => {
   const rawSvg = await fs.readFile(pathName, "utf-8");
   const parsed = parse(rawSvg);
   const rawText: any = [];
-  const tags = new Set();
+  const tags = new Set(["Linejoin", "Linecap"]);
+  const ignoredProps = ["id", "dataName", "xmlns"];
+  let isWidthAssigned = false;
+  let isHeightAssigned = false;
 
   const getFillColor = (() => {
     const fillColors = {
@@ -28,8 +31,12 @@ const parser = async (pathName: string, componentName: string) => {
         return `props.outerFill ?? "${color}"`;
       }
 
-      fillColors.inner = color;
-      return `props.innerFill ?? "${color}"`;
+      if (fillColors.inner === undefined || fillColors.inner === color) {
+        fillColors.inner = color;
+        return `props.innerFill ?? "${color}"`;
+      }
+
+      return color;
     };
   })();
 
@@ -45,8 +52,12 @@ const parser = async (pathName: string, componentName: string) => {
         return `props.outerStroke ?? "${color}"`;
       }
 
-      strokeColors.inner = color;
-      return `props.innerStroke ?? "${color}"`;
+      if (strokeColors.inner === undefined || strokeColors.inner === color) {
+        strokeColors.inner = color;
+        return `props.innerStroke ?? "${color}"`;
+      }
+
+      return color;
     };
   })();
 
@@ -62,8 +73,8 @@ export interface ${name}Props {
   width?: number;
   height?: number;
   strokeWidth?: number;
-  strokeLinecap?: 'butt' | 'round' | 'square';
-  strokeLinejoin: 'arcs' | 'bevel' | 'miter' | 'miter-clip' | 'round';
+  strokeLinecap?: Linecap;
+  strokeLinejoin?: Linejoin;
 }
 
 const ${name}: React.FC<${name}Props> = (props) => (
@@ -91,11 +102,17 @@ export default ${name};
 
           switch (key) {
             case "width": {
-              val = `props.width ?? ${val}`;
+              if (!isWidthAssigned) {
+                val = `props.width ?? ${val}`;
+                isWidthAssigned = true;
+              }
               break;
             }
             case "height": {
-              val = `props.height ?? ${val}`;
+              if (!isHeightAssigned) {
+                val = `props.height ?? ${val}`;
+                isHeightAssigned = true;
+              }
               break;
             }
             case "strokeWidth": {
@@ -121,10 +138,12 @@ export default ${name};
             default:
           }
 
-          if (typeof val === "string" && !val.match(/^props/)) {
-            props.push(`${key}="${val}"`);
-          } else {
-            props.push(`${key}={${val}}`);
+          if (!ignoredProps.includes(key)) {
+            if (typeof val === "string" && !val.match(/^props/)) {
+              props.push(`${key}="${val}"`);
+            } else {
+              props.push(`${key}={${val}}`);
+            }
           }
         });
         rawText.push(props.join(" "));
