@@ -26,12 +26,18 @@ const parser = async (pathName: string, componentName: string) => {
     };
 
     return (color: any) => {
-      if (fillColors.outer === undefined || fillColors.outer === color) {
+      if (
+        (color !== "none" && fillColors.outer === undefined) ||
+        fillColors.outer === color
+      ) {
         fillColors.outer = color;
         return `props.outerFill ?? "${color}"`;
       }
 
-      if (fillColors.inner === undefined || fillColors.inner === color) {
+      if (
+        (color !== "none" && fillColors.inner === undefined) ||
+        fillColors.inner === color
+      ) {
         fillColors.inner = color;
         return `props.innerFill ?? "${color}"`;
       }
@@ -47,12 +53,18 @@ const parser = async (pathName: string, componentName: string) => {
     };
 
     return (color: any) => {
-      if (strokeColors.outer === undefined || strokeColors.outer === color) {
+      if (
+        (color !== "none" && strokeColors.outer === undefined) ||
+        strokeColors.outer === color
+      ) {
         strokeColors.outer = color;
         return `props.outerStroke ?? "${color}"`;
       }
 
-      if (strokeColors.inner === undefined || strokeColors.inner === color) {
+      if (
+        (color !== "none" && strokeColors.inner === undefined) ||
+        strokeColors.inner === color
+      ) {
         strokeColors.inner = color;
         return `props.innerStroke ?? "${color}"`;
       }
