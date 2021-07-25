@@ -67,6 +67,10 @@ const parser = async (pathName: string, componentName: string) => {
     };
   })();
 
+  const normalizeUnit = (unit: string | number) => {
+    return String(unit).replace(/px|pt|rem|em|\%/, "");
+  };
+
   const constructReact = (name: string, body: string, header: string) => `
 import React from 'react';
 ${header}
@@ -109,28 +113,28 @@ export default ${name};
           switch (key) {
             case "width": {
               if (!isWidthAssigned) {
-                val = `props.width ?? ${val}`;
+                val = `props.width ?? ${normalizeUnit(val)}`;
                 isWidthAssigned = true;
               }
               break;
             }
             case "height": {
               if (!isHeightAssigned) {
-                val = `props.height ?? ${val}`;
+                val = `props.height ?? ${normalizeUnit(val)}`;
                 isHeightAssigned = true;
               }
               break;
             }
             case "strokeWidth": {
-              val = `props.strokeWidth ?? ${val}`;
+              val = `props.strokeWidth ?? ${normalizeUnit(val)}`;
               break;
             }
             case "strokeLinecap": {
-              val = `props.strokeLinecap ?? "${val}"`;
+              val = `props.strokeLinecap ?? "${normalizeUnit(val)}"`;
               break;
             }
             case "strokeLinejoin": {
-              val = `props.strokeLinejoin ?? "${val}"`;
+              val = `props.strokeLinejoin ?? "${normalizeUnit(val)}"`;
               break;
             }
             case "fill": {
