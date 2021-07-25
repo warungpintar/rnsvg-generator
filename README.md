@@ -16,7 +16,11 @@ npm i -g rnsvg-generator
 this svg code
 
 ```svg
-<?xml version="1.0" encoding="UTF-8"?><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6C10 4.89543 10.8954 4 12 4H36C37.1046 4 38 4.89543 38 6V44L31 39L24 44L17 39L10 44V6Z" fill="#2F88FF" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 22L30 22" stroke="#FFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 30L30 30" stroke="#FFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 14L30 14" stroke="#FFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg height="100" width="100">
+  <circle class="circle" cx="50" cy="50" r="50" stroke-width="1" fill="#86bc25" fill-opacity="0.4" />
+  <circle class="circle" cx="50" cy="50" r="35" stroke-width="1" fill="black" />
+  <circle class="circle" cx="50" cy="50" r="34" stroke-width="2" fill="#86bc25" />
+</svg>
 ```
 will be converted into
 
