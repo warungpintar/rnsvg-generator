@@ -1,11 +1,12 @@
 {
-  "name": "rnicons-generator",
+  "name": "rnsvg-generator",
   "version": "1.0.0",
   "main": "index.js",
   "author": "adeyahya",
   "license": "MIT",
   "bin": {
-    "rnicons": "./bin.js"
+    "rnsvg": "./bin.js",
+    "rnsvg-generator": "./bin.js"
   },
   "scripts": {
     "build": "concurrently yarn:build:*",
