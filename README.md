@@ -1,5 +1,5 @@
 # rnsvg-generator
-convert any svg files into React Component that compatible to `react-native-svg`
+convert any svg files into programmable React Component that compatible to `react-native-svg`
 
 ## Usage
 
