@@ -1,14 +1,8 @@
-import { parse } from "svg-parser";
+import { parse, ElementNode } from "svg-parser";
 import fs from "fs/promises";
 import _camelCase from "lodash/camelCase";
 import _upperFirst from "lodash/upperFirst";
 import prettier from "prettier";
-
-type Defs = {
-  tagName: string;
-  properties: Record<string, any>;
-  children: Defs[];
-};
 
 const parser = async (pathName: string, componentName: string) => {
   const rawSvg = await fs.readFile(pathName, "utf-8");
@@ -96,7 +90,7 @@ const ${name}: React.FC<${name}Props> = (props) => (
 export default ${name};
 `;
 
-  const walker = (items: Defs[]) => {
+  const walker = (items: ElementNode[]) => {
     return items.map((item) => {
       if (item.tagName) {
         item.tagName = _upperFirst(_camelCase(item.tagName));
@@ -107,7 +101,7 @@ export default ${name};
       if (item.properties) {
         const props: string[] = [""];
         Object.keys(item.properties).forEach((key) => {
-          let val = item.properties[key];
+          let val = item.properties![key];
           if (key.match(/\-/g)) {
             key = _camelCase(key);
           }
@@ -163,7 +157,7 @@ export default ${name};
 
       if (item.children?.length > 0) {
         rawText.push(">");
-        item.children = walker(item.children);
+        item.children = walker(item.children as ElementNode[]);
         rawText.push(`</${item.tagName}>`);
       } else {
         rawText.push(" />");
@@ -173,8 +167,7 @@ export default ${name};
     });
   };
 
-  // @ts-ignore
-  walker(parsed.children);
+  walker(parsed.children as ElementNode[]);
 
   const bodyText = rawText.join("");
   const headerText = `import {${Array.from(tags).join(

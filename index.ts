@@ -28,6 +28,7 @@ program.action(async (sourcePath, { output }) => {
   const cwd = process.cwd();
   const outputPath = output ? path.join(cwd, output) : cwd;
   sourcePath = path.join(cwd, sourcePath);
+  const failedTasks: string[] = [];
 
   const files = await getFiles(sourcePath);
   const promises = files.map((filePath) => {
@@ -43,11 +44,10 @@ program.action(async (sourcePath, { output }) => {
           {
             encoding: "utf-8",
           },
-          () => {
-            console.log(
-              "success generating",
-              outputPath + "/" + componentName + ".tsx"
-            );
+          (error) => {
+            if (error) {
+              failedTasks.push(filePath);
+            }
             resolve(null);
           }
         );
@@ -55,7 +55,16 @@ program.action(async (sourcePath, { output }) => {
     });
   });
 
-  await Promise.all(promises);
+  await Promise.all(promises).then(() => {
+    const successCount = files.length - failedTasks.length;
+    console.log(`succesfully generate ${successCount} components`);
+    if (failedTasks.length > 0) {
+      console.warn(`${failedTasks.length} failed`);
+      console.dir(failedTasks, {
+        depth: 2,
+      });
+    }
+  });
 });
 
 program.parse(process.argv);
