@@ -1,4 +1,5 @@
 # rnsvg-generator
+
 convert any svg files into programmable React Component that compatible to `react-native-svg`
 
 ## Usage
@@ -14,6 +15,7 @@ npm i -g rnsvg-generator
 ```
 
 ## Example
+
 this svg code
 
 ```svg
@@ -23,6 +25,7 @@ this svg code
   <circle class="circle" cx="50" cy="50" r="34" stroke-width="2" fill="#86bc25" />
 </svg>
 ```
+
 will be converted into
 
 ```tsx
@@ -82,3 +85,9 @@ const Bill: React.FC<BillProps> = (props) => (
 
 export default Bill;
 ```
+
+## License
+
+MIT
+
+![Hi-Five](https://media.giphy.com/media/JhThbOq62vwn6/giphy.gif)

@@ -4,6 +4,9 @@
   "main": "index.js",
   "author": "adeyahya",
   "license": "MIT",
+  "repository": {
+    "url": "https://github.com/warungpintar/rnsvg-generator"
+  },
   "bin": {
     "rnsvg": "./bin.js",
     "rnsvg-generator": "./bin.js"
