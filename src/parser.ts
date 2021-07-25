@@ -9,7 +9,7 @@ const parser = async (pathName: string, componentName: string) => {
   const parsed = parse(rawSvg);
   const rawText: any = [];
   const tags = new Set(["Linejoin", "Linecap"]);
-  const ignoredProps = ["id", "dataName", "xmlns"];
+  const ignoredProps = ["id", "dataName", "xmlns", "xmlns:xlink", "version"];
   let isWidthAssigned = false;
   let isHeightAssigned = false;
 
