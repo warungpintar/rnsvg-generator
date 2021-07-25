@@ -8,6 +8,10 @@
     "rnsvg": "./bin.js",
     "rnsvg-generator": "./bin.js"
   },
+  "files": [
+    "dist",
+    "bin.js"
+  ],
   "scripts": {
     "build": "concurrently yarn:build:*",
     "build:lib": "./scripts/build.js",
