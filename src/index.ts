@@ -31,8 +31,6 @@ const parseToJSXComponent = (
   outputPath: string,
   callback?: () => any
 ) => {
-  const spinner = ora("generating components").start();
-
   if (!filePath) {
     spinner.stop();
     process.exit(0);
@@ -69,6 +67,7 @@ const program = new Command();
 program.argument("<sourceDir>").requiredOption("-o --output <value>");
 
 program.action(async (sourcePath: string, { output }) => {
+  const spinner = ora("generating components").start();
   const stats = fs.lstatSync(sourcePath);
   const cwd = process.cwd();
   const outputPath = output.match(/^(\~|\/)/) ? output : path.join(cwd, output);
@@ -88,6 +87,7 @@ program.action(async (sourcePath: string, { output }) => {
     const iterate = () => {
       const filePath = filesIterator.next().value;
       parseToJSXComponent(filePath, outputPath, iterate);
+      spinner.text = `${filePath} converted successfully`
     };
 
     iterate();
