@@ -4,6 +4,29 @@ import _camelCase from "lodash/camelCase";
 import _upperFirst from "lodash/upperFirst";
 import prettier from "prettier";
 
+const constructReact = (name: string, body: string, header: string) => `
+import React from 'react';
+${header}
+
+export interface ${name}Props {
+  outerFill?: string;
+  innerFill?: string;
+  outerStroke?: string;
+  innerStroke?: string;
+  width?: number;
+  height?: number;
+  strokeWidth?: number;
+  strokeLinecap?: Linecap;
+  strokeLinejoin?: Linejoin;
+}
+
+const ${name}: React.FC<${name}Props> = (props) => (
+  ${body}
+);
+
+export default ${name};
+`;
+
 const parser = async (pathName: string, componentName: string) => {
   const rawSvg = await fs.readFile(pathName, "utf-8");
   const parsed = parse(rawSvg);
@@ -70,29 +93,6 @@ const parser = async (pathName: string, componentName: string) => {
   const normalizeUnit = (unit: string | number) => {
     return String(unit).replace(/px|pt|rem|em|\%/, "");
   };
-
-  const constructReact = (name: string, body: string, header: string) => `
-import React from 'react';
-${header}
-
-export interface ${name}Props {
-  outerFill?: string;
-  innerFill?: string;
-  outerStroke?: string;
-  innerStroke?: string;
-  width?: number;
-  height?: number;
-  strokeWidth?: number;
-  strokeLinecap?: Linecap;
-  strokeLinejoin?: Linejoin;
-}
-
-const ${name}: React.FC<${name}Props> = (props) => (
-  ${body}
-);
-
-export default ${name};
-`;
 
   const walker = (items: ElementNode[]) => {
     return items.map((item) => {

@@ -2,25 +2,10 @@ import _camelCase from "lodash/camelCase";
 import _upperFirst from "lodash/upperFirst";
 import path from "path";
 import fs from "fs";
-import parser from "./parser";
 import { Command } from "commander";
-import { readdir } from "fs/promises";
 import ora from "ora";
-
-async function getFiles(dir: string): Promise<string[]> {
-  const dirents = await readdir(dir, { withFileTypes: true });
-  const files: any[] | Promise<any> = await Promise.all(
-    // @ts-ignore
-    dirents.map((dirent) => {
-      const res = path.resolve(dir, dirent.name);
-      return dirent.isDirectory() ? getFiles(res) : res;
-    })
-  );
-
-  return Array.prototype
-    .concat(...files)
-    .filter((file) => path.extname(file) === ".svg");
-}
+import convert from "./convert";
+import { getSvgFiles } from "./utils";
 
 const parseToJSXComponent = (filePath: string, outputPath: string) => {
   const componentName = _upperFirst(
@@ -28,7 +13,7 @@ const parseToJSXComponent = (filePath: string, outputPath: string) => {
   );
 
   return new Promise((resolve) => {
-    parser(filePath, componentName).then((text) => {
+    convert(filePath, componentName).then((text) => {
       const isHasExtension = outputPath.match(/\.+[a-zA-Z]+$/);
 
       if (!isHasExtension) {
@@ -72,7 +57,7 @@ program.action(async (sourcePath: string, { output }) => {
   }
 
   if (stats.isDirectory()) {
-    const files = await getFiles(sourcePath);
+    const files = getSvgFiles(sourcePath);
     const filesIterator = files[Symbol.iterator]();
 
     const iterate = async () => {
