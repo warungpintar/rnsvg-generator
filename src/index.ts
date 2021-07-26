@@ -60,17 +60,13 @@ program.action(async (sourcePath: string, { output }) => {
           } else {
             spinner.text = `${componentName + ".tsx"} generated`;
           }
+          iterate();
         }
       );
-
-      iterate();
     });
   };
 
   iterate();
-  // files.forEach((filePath) => {
-
-  // });
 });
 
 program.parse(process.argv);
