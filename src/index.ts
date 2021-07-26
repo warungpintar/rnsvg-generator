@@ -54,7 +54,6 @@ const parseToJSXComponent = (
         if (error) {
           console.warn(`error converting: ${filePath}`);
         } else {
-          spinner.text = `${componentName + ".tsx"} generated`;
           if (callback) {
             callback();
           } else {
