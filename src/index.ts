@@ -32,7 +32,6 @@ const parseToJSXComponent = (
   callback?: () => any
 ) => {
   if (!filePath) {
-    spinner.stop();
     process.exit(0);
   }
 
@@ -87,7 +86,7 @@ program.action(async (sourcePath: string, { output }) => {
     const iterate = () => {
       const filePath = filesIterator.next().value;
       parseToJSXComponent(filePath, outputPath, iterate);
-      spinner.text = `${filePath} converted successfully`
+      spinner.text = `${filePath} converted successfully`;
     };
 
     iterate();
