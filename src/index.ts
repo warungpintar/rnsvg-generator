@@ -8,7 +8,7 @@ import ora from "ora";
 import convert from "./convert";
 import { getSvgFiles } from "./utils";
 
-const parseToJSXComponent = async (filePath: string, outputPath: string) => {
+const writeToJsxComponent = async (filePath: string, outputPath: string) => {
   try {
     const componentName = _upperFirst(
       _camelCase(path.basename(filePath, ".svg"))
@@ -26,6 +26,7 @@ const parseToJSXComponent = async (filePath: string, outputPath: string) => {
         { encoding: "utf-8" }
       );
     } else {
+      await mkdir(path.dirname(outputPath), { recursive: true });
       await writeFile(outputPath, componentText, { encoding: "utf-8" });
     }
     return true;
@@ -47,7 +48,7 @@ program.action(async (sourcePath: string, { output }) => {
   const stats = fs.lstatSync(sourcePath);
 
   if (stats.isFile()) {
-    await parseToJSXComponent(sourcePath, outputPath);
+    await writeToJsxComponent(sourcePath, outputPath);
   }
 
   if (stats.isDirectory()) {
@@ -58,7 +59,7 @@ program.action(async (sourcePath: string, { output }) => {
       const filePath = filesIterator.next().value;
 
       if (filePath) {
-        const isSuccess = await parseToJSXComponent(filePath, outputPath);
+        const isSuccess = await writeToJsxComponent(filePath, outputPath);
 
         if (isSuccess) {
           spinner.text = `${path.basename(filePath)} converted successfully`;

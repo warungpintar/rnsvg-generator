@@ -1,5 +1,4 @@
 import { parse, ElementNode } from "svg-parser";
-import fs from "fs/promises";
 import _camelCase from "lodash/camelCase";
 import _upperFirst from "lodash/upperFirst";
 import prettier from "prettier";
