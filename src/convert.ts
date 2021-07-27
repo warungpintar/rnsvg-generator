@@ -26,8 +26,7 @@ const ${name}: React.FC<${name}Props> = (props) => (
 export default ${name};
 `;
 
-const parser = async (rawSvg: string, componentName: string) => {
-  // const rawSvg = await fs.readFile(pathName, "utf-8");
+const convert = async (rawSvg: string, componentName: string) => {
   const parsed = parse(rawSvg);
   const rawText: any = [];
   const tags = new Set(["Linejoin", "Linecap"]);
@@ -183,4 +182,4 @@ const parser = async (rawSvg: string, componentName: string) => {
   });
 };
 
-export default parser;
+export default convert;
