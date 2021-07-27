@@ -16,12 +16,10 @@
     "bin.js"
   ],
   "scripts": {
-    "build": "concurrently yarn:build:*",
-    "build:lib": "./scripts/build.js",
+    "build": "./scripts/build.js",
     "build:types": "tsc --declaration --emitDeclarationOnly",
     "dev": "./scripts/watch.js",
-    "test": "concurrently yarn:test:*",
-    "test:type": "tsc --noEmit"
+    "test": "jest"
   },
   "devDependencies": {
     "@types/eslint": "^7.28.0",
