@@ -73,13 +73,25 @@ export const createColorMemoizer = () => {
 /**
  * remove any units in a number
  * eg: 10px become 10
- * @returns
+ * ignore if the value type is not a string
  */
 export const normalizeUnit = (val: string | number) =>
-  String(val).replace(IGNORED_UNITS_RE, "").trim();
+  typeof val !== "string"
+    ? val
+    : String(val).replace(IGNORED_UNITS_RE, "").trim();
 
+/**
+ * determine if some value should be wrapped with quotes
+ * or not based on react props assignment rule
+ */
 export const wrapReactPropsValue = (val: unknown) => {
-  if (typeof val !== "string") return val;
+  if (typeof val !== "string") {
+    if (typeof val === "object") {
+      return JSON.stringify(val);
+    }
+
+    return val;
+  }
 
   if (isNaN(Number(val))) {
     return `"${val}"`;

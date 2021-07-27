@@ -2,7 +2,7 @@ import { parse, ElementNode } from "svg-parser";
 import _camelCase from "lodash/camelCase";
 import _upperFirst from "lodash/upperFirst";
 import prettier from "prettier";
-import { normalizeUnit } from "./utils";
+import { createColorMemoizer, stringifyProps } from "./utils";
 
 const constructReact = (name: string, body: string, header: string) => `
 import React from 'react';
@@ -29,146 +29,85 @@ export default ${name};
 
 const convert = async (rawSvg: string, componentName: string) => {
   const parsed = parse(rawSvg);
-  const rawText: any = [];
   const tags = new Set(["Linejoin", "Linecap"]);
-  const ignoredProps = ["id", "dataName", "xmlns", "xmlns:xlink", "version"];
-  let isWidthAssigned = false;
-  let isHeightAssigned = false;
+  const ignoredProps = [
+    "id",
+    "dataName",
+    "xmlns",
+    "xmlns:xlink",
+    "version",
+    "fill",
+    "stroke",
+  ];
 
-  const getFillColor = (() => {
-    const fillColors = {
-      outer: undefined,
-      inner: undefined,
-    };
-
-    return (color: any) => {
-      if (
-        (color !== "none" && fillColors.outer === undefined) ||
-        fillColors.outer === color
-      ) {
-        fillColors.outer = color;
-        return `props.outerFill ?? "${color}"`;
-      }
-
-      if (
-        (color !== "none" && fillColors.inner === undefined) ||
-        fillColors.inner === color
-      ) {
-        fillColors.inner = color;
-        return `props.innerFill ?? "${color}"`;
-      }
-
-      return color;
-    };
-  })();
-
-  const getStrokeColor = (() => {
-    const strokeColors = {
-      outer: undefined,
-      inner: undefined,
-    };
-
-    return (color: any) => {
-      if (
-        (color !== "none" && strokeColors.outer === undefined) ||
-        strokeColors.outer === color
-      ) {
-        strokeColors.outer = color;
-        return `props.outerStroke ?? "${color}"`;
-      }
-
-      if (
-        (color !== "none" && strokeColors.inner === undefined) ||
-        strokeColors.inner === color
-      ) {
-        strokeColors.inner = color;
-        return `props.innerStroke ?? "${color}"`;
-      }
-
-      return color;
-    };
-  })();
+  const getFillColor = createColorMemoizer();
+  const getStrokeColor = createColorMemoizer();
 
   const walker = (items: ElementNode[]) => {
-    return items.map((item) => {
-      if (item.tagName) {
-        item.tagName = _upperFirst(_camelCase(item.tagName));
-        rawText.push("<" + item.tagName);
-        tags.add(item.tagName);
+    return items.reduce((acc, value) => {
+      let nodeString = "";
+
+      if (value.tagName) {
+        const normalizedTagName = _upperFirst(_camelCase(value.tagName));
+        tags.add(normalizedTagName);
+        nodeString += "<" + normalizedTagName;
+        const props = value.properties ?? {};
+        const programmableProps = [
+          "strokeWidth",
+          "strokeLinecap",
+          "strokeLinejoin",
+        ];
+
+        if (value.tagName === "svg") {
+          // only assign dimension props into root / svg tag
+          programmableProps.push("width", "height");
+        }
+
+        const stringifiedProps = stringifyProps(
+          props,
+          programmableProps,
+          ignoredProps
+        );
+
+        nodeString += " " + stringifiedProps;
+
+        if (props.fill) {
+          if (getFillColor(props.fill as string).outer) {
+            nodeString += `fill={props.outerFill ?? "${props.fill}"}`;
+          } else if (getFillColor(props.fill as string).inner) {
+            nodeString += `fill={props.innerFill ?? "${props.fill}"}`;
+          } else {
+            nodeString += `fill="${props.fill}"`;
+          }
+        }
+
+        if (props.stroke) {
+          if (getStrokeColor(props.stroke as string).outer) {
+            nodeString += `stroke={props.outerStroke ?? "${props.stroke}"}`;
+          } else if (getStrokeColor(props.stroke as string).inner) {
+            nodeString += `stroke={props.innerStroke ?? "${props.stroke}"}`;
+          } else {
+            nodeString += `stroke="${props.stroke}"`;
+          }
+        }
+
+        if (value.children?.length > 0) {
+          nodeString +=
+            ">" +
+            walker(value.children as ElementNode[]) +
+            "</" +
+            normalizedTagName +
+            ">";
+        } else {
+          nodeString += "/>";
+        }
       }
 
-      if (item.properties) {
-        const props: string[] = [""];
-        Object.keys(item.properties).forEach((key) => {
-          let val = item.properties![key];
-          if (key.match(/\-/g)) {
-            key = _camelCase(key);
-          }
-
-          switch (key) {
-            case "width": {
-              if (!isWidthAssigned) {
-                val = `props.width ?? ${normalizeUnit(val)}`;
-                isWidthAssigned = true;
-              }
-              break;
-            }
-            case "height": {
-              if (!isHeightAssigned) {
-                val = `props.height ?? ${normalizeUnit(val)}`;
-                isHeightAssigned = true;
-              }
-              break;
-            }
-            case "strokeWidth": {
-              val = `props.strokeWidth ?? ${normalizeUnit(val)}`;
-              break;
-            }
-            case "strokeLinecap": {
-              val = `props.strokeLinecap ?? "${normalizeUnit(val)}"`;
-              break;
-            }
-            case "strokeLinejoin": {
-              val = `props.strokeLinejoin ?? "${normalizeUnit(val)}"`;
-              break;
-            }
-            case "fill": {
-              val = getFillColor(val);
-              break;
-            }
-            case "stroke": {
-              val = getStrokeColor(val);
-              break;
-            }
-            default:
-          }
-
-          if (!ignoredProps.includes(key)) {
-            if (typeof val === "string" && !val.match(/^props/)) {
-              props.push(`${key}="${val}"`);
-            } else {
-              props.push(`${key}={${val}}`);
-            }
-          }
-        });
-        rawText.push(props.join(" "));
-      }
-
-      if (item.children?.length > 0) {
-        rawText.push(">");
-        item.children = walker(item.children as ElementNode[]);
-        rawText.push(`</${item.tagName}>`);
-      } else {
-        rawText.push(" />");
-      }
-
-      return item;
-    });
+      return acc.concat(nodeString).concat("\n");
+    }, "");
   };
 
-  walker(parsed.children as ElementNode[]);
-
-  const bodyText = rawText.join("");
+  const bodyText = walker(parsed.children as ElementNode[]);
   const headerText = `import {${Array.from(tags).join(
     ","
   )}} from "react-native-svg";`;
