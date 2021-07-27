@@ -2,6 +2,8 @@ import path from "path";
 import { PathLike } from "fs";
 import fs from "fs";
 
+const IGNORED_UNITS_RE = /px|pt|rem|em|\%/;
+
 export const readdir = (path: PathLike) => {
   try {
     return fs.readdirSync(path, { withFileTypes: true });
@@ -21,3 +23,11 @@ export const getSvgFiles = (sourcePath: string): string[] => {
     .concat(...files)
     .filter((file) => path.extname(file) === ".svg");
 };
+
+/**
+ * remove any units in a number
+ * eg: 10px become 10
+ * @returns
+ */
+export const normalizeUnit = (val: string | number) =>
+  String(val).replace(IGNORED_UNITS_RE, "").trim();

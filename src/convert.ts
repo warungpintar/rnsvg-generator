@@ -2,6 +2,7 @@ import { parse, ElementNode } from "svg-parser";
 import _camelCase from "lodash/camelCase";
 import _upperFirst from "lodash/upperFirst";
 import prettier from "prettier";
+import { normalizeUnit } from "./utils";
 
 const constructReact = (name: string, body: string, header: string) => `
 import React from 'react';
@@ -87,10 +88,6 @@ const convert = async (rawSvg: string, componentName: string) => {
       return color;
     };
   })();
-
-  const normalizeUnit = (unit: string | number) => {
-    return String(unit).replace(/px|pt|rem|em|\%/, "");
-  };
 
   const walker = (items: ElementNode[]) => {
     return items.map((item) => {
