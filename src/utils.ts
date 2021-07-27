@@ -18,11 +18,14 @@ export const readdir = (path: PathLike) => {
   }
 };
 
-export const getSvgFiles = (sourcePath: string): string[] => {
+export const getSvgFiles = (
+  sourcePath: string,
+  recursive: boolean = true
+): string[] => {
   const dirents = readdir(sourcePath);
   const files = dirents.map((file) => {
     const resource = path.resolve(sourcePath, file.name);
-    return file.isDirectory() ? getSvgFiles(resource) : resource;
+    return recursive && file.isDirectory() ? getSvgFiles(resource) : resource;
   });
 
   return Array.prototype

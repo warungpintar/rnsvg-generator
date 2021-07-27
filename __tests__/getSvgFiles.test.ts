@@ -21,4 +21,15 @@ describe("get svg files", () => {
       false
     );
   });
+
+  it("should works in flat / non recursive", () => {
+    const svgFilesNonR = getSvgFiles(fixturesPath, false);
+    expect(svgFilesNonR).toHaveLength(2);
+    expect(svgFilesNonR.includes(path.join(fixturesPath, "login.svg"))).toBe(
+      true
+    );
+    expect(svgFilesNonR.includes(path.join(fixturesPath, "partying.svg"))).toBe(
+      true
+    );
+  });
 });
