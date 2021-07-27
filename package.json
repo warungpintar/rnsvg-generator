@@ -16,12 +16,10 @@
     "bin.js"
   ],
   "scripts": {
-    "build": "concurrently yarn:build:*",
-    "build:lib": "./scripts/build.js",
+    "build": "./scripts/build.js",
     "build:types": "tsc --declaration --emitDeclarationOnly",
     "dev": "./scripts/watch.js",
-    "test": "concurrently yarn:test:*",
-    "test:type": "tsc --noEmit"
+    "test": "jest --coverage"
   },
   "devDependencies": {
     "@types/eslint": "^7.28.0",
@@ -30,6 +28,7 @@
     "@types/node": "^16.4.1",
     "@types/ora": "^3.2.0",
     "@types/prettier": "^2.3.2",
+    "@types/react": "^17.0.15",
     "@types/svg-parser": "^2.0.3",
     "commander": "^8.0.0",
     "concurrently": "^6.2.0",
@@ -40,6 +39,8 @@
     "lodash": "^4.17.21",
     "ora": "^5.4.1",
     "prettier": "^2.3.2",
+    "react": "^17.0.2",
+    "react-native-svg": "^12.1.1",
     "svg-parser": "^2.0.4",
     "ts-jest": "^27.0.4",
     "ts-node": "^10.1.0",
