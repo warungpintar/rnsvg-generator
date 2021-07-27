@@ -1,6 +1,7 @@
 import path from "path";
 import { PathLike } from "fs";
 import fs from "fs";
+import _camelCase from "lodash/camelCase";
 
 const IGNORED_UNITS_RE = /px|pt|rem|em|\%/;
 const NIL_COLORS_IN_CSS = ["none"];
@@ -32,6 +33,9 @@ export const getSvgFiles = (
     .concat(...files)
     .filter((file) => path.extname(file) === ".svg");
 };
+
+export const normalizePropsKey = (key: string) =>
+  key.match(/\-/g) ? _camelCase(key) : key;
 
 /**
  * create memoized function for
@@ -72,3 +76,28 @@ export const createColorMemoizer = () => {
  */
 export const normalizeUnit = (val: string | number) =>
   String(val).replace(IGNORED_UNITS_RE, "").trim();
+
+export const stringifyProps = (
+  props: Record<string, unknown>,
+  programmableKeys: string[] = [],
+  ignoredKeys: string[] = []
+) => {
+  return Object.keys(props).reduce((acc, value) => {
+    const propsVal = normalizeUnit(props[value] as string);
+    const normalizedKey = normalizePropsKey(value);
+
+    if (ignoredKeys.includes(normalizedKey)) {
+      return acc;
+    }
+
+    const hasFallback = programmableKeys.includes(normalizedKey);
+
+    if (hasFallback) {
+      return acc.concat(
+        `${normalizedKey}={props.${normalizedKey} ?? ${propsVal}}\n`
+      );
+    }
+
+    return acc.concat(`${normalizedKey}={${propsVal}}\n`);
+  }, "");
+};
