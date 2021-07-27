@@ -2,30 +2,7 @@ import { parse, ElementNode } from "svg-parser";
 import _camelCase from "lodash/camelCase";
 import _upperFirst from "lodash/upperFirst";
 import prettier from "prettier";
-import { createColorMemoizer, stringifyProps } from "./utils";
-
-const constructReact = (name: string, body: string, header: string) => `
-import React from 'react';
-${header}
-
-export interface ${name}Props {
-  outerFill?: string;
-  innerFill?: string;
-  outerStroke?: string;
-  innerStroke?: string;
-  width?: number;
-  height?: number;
-  strokeWidth?: number;
-  strokeLinecap?: Linecap;
-  strokeLinejoin?: Linejoin;
-}
-
-const ${name}: React.FC<${name}Props> = (props) => (
-  ${body}
-);
-
-export default ${name};
-`;
+import { createColorMemoizer, stringifyProps, constructReact } from "./utils";
 
 const convert = async (rawSvg: string, componentName: string) => {
   const parsed = parse(rawSvg);

@@ -127,3 +127,26 @@ export const stringifyProps = (
     return acc.concat(`${normalizedKey}={${propsVal}}\n`);
   }, "");
 };
+
+export const constructReact = (name: string, body: string, header: string) => `
+import React from 'react';
+${header}
+
+export interface ${name}Props {
+  outerFill?: string;
+  innerFill?: string;
+  outerStroke?: string;
+  innerStroke?: string;
+  width?: number;
+  height?: number;
+  strokeWidth?: number;
+  strokeLinecap?: Linecap;
+  strokeLinejoin?: Linejoin;
+}
+
+const ${name}: React.FC<${name}Props> = (props) => (
+  ${body}
+);
+
+export default ${name};
+`;
