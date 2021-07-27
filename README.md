@@ -1,6 +1,7 @@
 # rnsvg-generator
 
 [![npm version](https://badge.fury.io/js/rnsvg-generator.svg)](https://www.npmjs.com/package/rnsvg-generator)
+[![build](https://github.com/warungpintar/rnsvg-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/warungpintar/rnsvg-generator/actions/workflows/ci.yml)
 
 convert any svg files into programmable React Component that compatible to `react-native-svg`
 
