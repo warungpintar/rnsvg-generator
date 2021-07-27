@@ -19,7 +19,7 @@
     "build": "./scripts/build.js",
     "build:types": "tsc --declaration --emitDeclarationOnly",
     "dev": "./scripts/watch.js",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "devDependencies": {
     "@types/eslint": "^7.28.0",
