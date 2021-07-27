@@ -2,6 +2,7 @@ import path from "path";
 import { PathLike } from "fs";
 import fs from "fs";
 import _camelCase from "lodash/camelCase";
+import { flow } from "fp-ts/lib/function";
 
 const IGNORED_UNITS_RE = /px|pt|rem|em|\%/;
 const NIL_COLORS_IN_CSS = ["none"];
@@ -77,13 +78,26 @@ export const createColorMemoizer = () => {
 export const normalizeUnit = (val: string | number) =>
   String(val).replace(IGNORED_UNITS_RE, "").trim();
 
+export const wrapReactPropsValue = (val: unknown) => {
+  if (typeof val !== "string") return val;
+
+  if (isNaN(Number(val))) {
+    return `"${val}"`;
+  }
+
+  return val;
+};
+
 export const stringifyProps = (
   props: Record<string, unknown>,
   programmableKeys: string[] = [],
   ignoredKeys: string[] = []
 ) => {
   return Object.keys(props).reduce((acc, value) => {
-    const propsVal = normalizeUnit(props[value] as string);
+    const propsVal = flow(
+      normalizeUnit,
+      wrapReactPropsValue
+    )(props[value] as string);
     const normalizedKey = normalizePropsKey(value);
 
     if (ignoredKeys.includes(normalizedKey)) {
