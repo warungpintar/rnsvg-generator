@@ -1,50 +1,18 @@
 {
-  "name": "rnsvg-generator",
-  "version": "1.2.1",
+  "name": "svgc",
+  "version": "1.0.0",
   "main": "index.js",
-  "author": "adeyahya",
-  "license": "MIT",
-  "repository": {
-    "url": "https://github.com/warungpintar/rnsvg-generator"
-  },
-  "bin": {
-    "rnsvg": "./bin.js",
-    "rnsvg-generator": "./bin.js"
-  },
-  "files": [
-    "dist",
-    "bin.js"
-  ],
+  "repository": "git@github.com:warungpintar/rnsvg-generator.git",
+  "author": "adeyahya <adeyahyaprasetyo@gmail.com>",
   "scripts": {
-    "build": "./scripts/build.js",
-    "build:types": "tsc --declaration --emitDeclarationOnly",
-    "dev": "./scripts/watch.js",
-    "test": "jest --coverage"
+    "build:generator": "yarn --cwd packages/generator build",
+    "test:generator": "yarn --cwd packages/generator test"
   },
-  "devDependencies": {
-    "@types/eslint": "^7.28.0",
-    "@types/jest": "^26.0.24",
-    "@types/lodash": "^4.14.171",
-    "@types/node": "^16.4.1",
-    "@types/ora": "^3.2.0",
-    "@types/prettier": "^2.3.2",
-    "@types/react": "^17.0.15",
-    "@types/svg-parser": "^2.0.3",
-    "commander": "^8.0.0",
-    "concurrently": "^6.2.0",
-    "esbuild": "^0.12.7",
-    "eslint": "^7.31.0",
-    "fp-ts": "^2.10.5",
-    "jest": "^27.0.6",
-    "lodash": "^4.17.21",
-    "ora": "^5.4.1",
-    "prettier": "^2.3.2",
-    "react": "^17.0.2",
-    "react-native-svg": "^12.1.1",
-    "svg-parser": "^2.0.4",
-    "ts-jest": "^27.0.4",
-    "ts-node": "^10.1.0",
-    "typescript": "^4.3.5"
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
   },
-  "dependencies": {}
+  "license": "MIT",
+  "private": true
 }
