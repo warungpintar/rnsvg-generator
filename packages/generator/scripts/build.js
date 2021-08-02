@@ -13,4 +13,10 @@ const { baseConfig } = require("./config");
     format: "esm",
     outfile: path.resolve(__dirname, "../dist/index.esm.js"),
   });
+  await esbuild.build({
+    ...baseConfig,
+    entryPoints: [path.resolve(__dirname, "../src/cli.ts")],
+    minify: true,
+    outfile: path.resolve(__dirname, "../dist/cli.js"),
+  });
 })();

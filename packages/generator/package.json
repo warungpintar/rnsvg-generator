@@ -1,7 +1,8 @@
 {
   "name": "rnsvg-generator",
   "version": "1.2.1",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "author": "adeyahya",
   "license": "MIT",
   "repository": {
@@ -19,7 +20,8 @@
     "build": "./scripts/build.js",
     "build:types": "tsc --declaration --emitDeclarationOnly",
     "dev": "./scripts/watch.js",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "postinstall": "yarn build && yarn build:types"
   },
   "devDependencies": {
     "@types/eslint": "^7.28.0",
