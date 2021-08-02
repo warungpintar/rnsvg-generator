@@ -11,7 +11,7 @@ const input = `
 `;
 
 const expected = `import React from "react";
-import { Linejoin, Linecap, Svg, Rect, Path } from "react-native-svg";
+import { Svg, Rect, Path } from "react-native-svg";
 
 export interface ApiAppProps {
   outerFill?: string;
@@ -21,8 +21,8 @@ export interface ApiAppProps {
   width?: number;
   height?: number;
   strokeWidth?: number;
-  strokeLinecap?: Linecap;
-  strokeLinejoin?: Linejoin;
+  strokeLinecap?: "butt" | "round" | "square";
+  strokeLinejoin?: "miter" | "bevel" | "round";
 }
 
 const ApiApp: React.FC<ApiAppProps> = (props) => (
@@ -86,8 +86,8 @@ export interface ApiAppProps {
   width?: number;
   height?: number;
   strokeWidth?: number;
-  strokeLinecap?: Linecap;
-  strokeLinejoin?: Linejoin;
+  strokeLinecap?: "butt" | "round" | "square";
+  strokeLinejoin?: "miter" | "bevel" | "round";
 }
 
 const ApiApp: React.FC<ApiAppProps> = (props) => (

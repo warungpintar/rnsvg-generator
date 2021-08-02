@@ -10,7 +10,7 @@ const convert = async (
   isWeb: boolean = false
 ) => {
   const parsed = parse(rawSvg);
-  const tags = new Set(["Linejoin", "Linecap"]);
+  const tags = new Set<string>([]);
   const ignoredProps = [
     "id",
     "dataName",
