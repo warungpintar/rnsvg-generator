@@ -8,14 +8,18 @@ import ora from "ora";
 import convert from "./convert";
 import { getSvgFiles } from "./utils";
 
-const writeToJsxComponent = async (filePath: string, outputPath: string) => {
+const writeToJsxComponent = async (
+  filePath: string,
+  outputPath: string,
+  isWeb: boolean
+) => {
   try {
     const componentName = _upperFirst(
       _camelCase(path.basename(filePath, ".svg"))
     );
 
     const rawSvgText = await readFile(filePath, "utf-8");
-    const componentText = await convert(rawSvgText, componentName);
+    const componentText = await convert(rawSvgText, componentName, isWeb);
     const isHasExtension = outputPath.match(/\.+[a-zA-Z]+$/);
 
     if (!isHasExtension) {
@@ -36,9 +40,12 @@ const writeToJsxComponent = async (filePath: string, outputPath: string) => {
 };
 
 const program = new Command();
-program.argument("<sourceDir>").requiredOption("-o --output <value>");
+program
+  .argument("<sourceDir>")
+  .requiredOption("-o --output <value>")
+  .option("-w --web");
 
-program.action(async (sourcePath: string, { output }) => {
+program.action(async (sourcePath: string, { output, web }) => {
   const spinner = ora("generating components").start();
   const cwd = process.cwd();
   const outputPath = output.match(/^(\~|\/)/) ? output : path.join(cwd, output);
@@ -48,7 +55,7 @@ program.action(async (sourcePath: string, { output }) => {
   const stats = fs.lstatSync(sourcePath);
 
   if (stats.isFile()) {
-    await writeToJsxComponent(sourcePath, outputPath);
+    await writeToJsxComponent(sourcePath, outputPath, web);
   }
 
   if (stats.isDirectory()) {
@@ -59,7 +66,7 @@ program.action(async (sourcePath: string, { output }) => {
       const filePath = filesIterator.next().value;
 
       if (filePath) {
-        const isSuccess = await writeToJsxComponent(filePath, outputPath);
+        const isSuccess = await writeToJsxComponent(filePath, outputPath, web);
 
         if (isSuccess) {
           spinner.text = `${path.basename(filePath)} converted successfully`;
