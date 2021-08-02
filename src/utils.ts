@@ -140,8 +140,8 @@ export interface ${name}Props {
   width?: number;
   height?: number;
   strokeWidth?: number;
-  strokeLinecap?: Linecap;
-  strokeLinejoin?: Linejoin;
+  strokeLinecap?: 'butt' | 'round' | 'square';
+  strokeLinejoin?: 'miter' | 'bevel' | 'round';
 }
 
 const ${name}: React.FC<${name}Props> = (props) => (
