@@ -4,7 +4,11 @@ import _upperFirst from "lodash/upperFirst";
 import prettier from "prettier";
 import { createColorMemoizer, stringifyProps, constructReact } from "./utils";
 
-const convert = async (rawSvg: string, componentName: string) => {
+const convert = async (
+  rawSvg: string,
+  componentName: string,
+  isWeb: boolean = false
+) => {
   const parsed = parse(rawSvg);
   const tags = new Set(["Linejoin", "Linecap"]);
   const ignoredProps = [
@@ -25,7 +29,9 @@ const convert = async (rawSvg: string, componentName: string) => {
       let nodeString = "";
 
       if (value.tagName) {
-        const normalizedTagName = _upperFirst(_camelCase(value.tagName));
+        const normalizedTagName = isWeb
+          ? _camelCase(value.tagName)
+          : _upperFirst(_camelCase(value.tagName));
         tags.add(normalizedTagName);
         nodeString += "<" + normalizedTagName;
         const props = value.properties ?? {};
@@ -85,9 +91,9 @@ const convert = async (rawSvg: string, componentName: string) => {
   };
 
   const bodyText = walker(parsed.children as ElementNode[]);
-  const headerText = `import {${Array.from(tags).join(
-    ","
-  )}} from "react-native-svg";`;
+  const headerText = isWeb
+    ? ""
+    : `import {${Array.from(tags).join(",")}} from "react-native-svg";`;
   const reactText = constructReact(componentName, bodyText, headerText);
 
   return prettier.format(reactText, {
