@@ -20,7 +20,7 @@
     "jsx": "preserve",
     "paths": {
       "~/*": [
-        "/src/*"
+        "src/*"
       ],
       "~generator/*": [
         "../packages/generator/src/*"
